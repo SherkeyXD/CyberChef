@@ -10,7 +10,9 @@ jobs:
   main:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+      with:
+        show-progress: false
 
     - name: Set node version
       uses: actions/setup-node@v3
@@ -33,7 +35,7 @@ jobs:
 
     - name: Production Build
       if: success()
-      run: npx grunt prod --msg="Version 10 is here! Read about the new features <a href='https://github.com/gchq/CyberChef/wiki/Character-encoding,-EOL-separators,-and-editor-features'>here</a>"
+      run: npx grunt prod --msg="_(:3」∠)_"
 
     - name: Generate sitemap
       run: npx grunt exec:sitemap
@@ -44,15 +46,7 @@ jobs:
         sudo apt-get install xvfb
         xvfb-run --server-args="-screen 0 1200x800x24" npx grunt testui
 
-    - name: Prepare for GitHub Pages
-      if: success()
-      run: npx grunt copy:ghPages
-
-    - name: Deploy to GitHub Pages
-      if: success() && github.ref == 'refs/heads/master'
-      uses: crazy-max/ghaction-github-pages@v3
+    - name: Upload
+      uses: actions/upload-artifact@v4
       with:
-        target_branch: gh-pages
-        build_dir: ./build/prod
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        path: build/prod/*.zip
